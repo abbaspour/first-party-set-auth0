@@ -41,8 +41,8 @@ resource "aws_lambda_function" "fps" {
   s3_bucket = aws_s3_bucket.lambda_bucket.bucket
   s3_key = "lambda-${local.lambda_name}-${var.lambda_version}.zip"
 
-  handler = "src/lambda.handler"
-  runtime = "nodejs14.x" // 16 is not avaialble in edge yet
+  handler = "fps/app.handler"
+  runtime = "nodejs14.x" // 16 is not available in edge yet
 
   role = aws_iam_role.lambda_exec.arn
   timeout = 20

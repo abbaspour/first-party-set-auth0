@@ -5,6 +5,3 @@ terraform.tfstate
 terraform.tfstate.backup
 terraform.auto.tfvars
 *.plan
-.*-uploaded
-.*-released
-*.zip

@@ -14,10 +14,21 @@ region=us-east-1
 
 lambda: $(bundle)
 
-%.zip: src node_modules
-	zip -qr $(bundle) src node_modules/
-	@echo "files list:"
-	@unzip -t $(bundle) |  grep -v node_modules
+js=./dist/app.js
+ts=./src/fps.ts
+
+%.js: $(ts) tsconfig.json
+	npm run build
+
+
+%.zip: $(js)
+	rm -f $@
+	cd dist && zip -Xr ../$@ . -x *.LICENSE.txt
+
+#%.zip: src node_modules
+#	zip -qr $(bundle) src node_modules/
+#	@echo "files list:"
+#	@unzip -t $(bundle) |  grep -v node_modules
 
 node_modules: package.json
 	npm ci
@@ -42,6 +53,7 @@ logs:
 
 clean:
 	rm $(bundle)
+	rm -rf dist
 	rm -f .*-uploaded
 	rm -f .*-released
 

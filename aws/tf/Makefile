@@ -25,6 +25,12 @@ init:
 clean:
 	rm $(PLAN_FILE)
 
+bucket:
+	@$(PREFIX) terraform output bucket
+
+console:
+	gk c -p pro-services-dev -g us-east-1
+
 cost:
 	infracost breakdown --path . --show-skipped --format html > $(report)
 

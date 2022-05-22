@@ -3,13 +3,17 @@ resource "aws_route53_zone" "owner_zone" {
 }
 
 locals {
-  auth0_custom_domain = "id.${var.owner_domain}"
+  auth0_custom_domain = "${var.auth0_subdomain}.${var.owner_domain}"
+}
+
+output "custom_domain" {
+  value = local.auth0_custom_domain
 }
 
 resource "aws_acm_certificate" "certificate" {
   domain_name               = var.owner_domain
   validation_method         = "DNS"
-  provider                  = virginia
+  //provider                  = aws.virginia
   subject_alternative_names = [
     var.owner_domain,
     "*.${var.owner_domain}"
@@ -31,15 +35,33 @@ resource "aws_route53_record" "record" {
   type    = "A"
 
   alias {
-    name                   = aws_cloudfront_distribution.auth0_custom_domain_name.domain_name
-    zone_id                = aws_cloudfront_distribution.auth0_custom_domain_name.hosted_zone_id
+    name                   = aws_cloudfront_distribution.custom_domain_distribution.domain_name
+    zone_id                = aws_cloudfront_distribution.custom_domain_distribution.hosted_zone_id
     evaluate_target_health = false
   }
 }
 
-resource "aws_cloudfront_distribution" "auth0_custom_domain_name" {
+resource "aws_s3_bucket" "cloudfront_logs" {
+  bucket_prefix = "cloudfront-logs-fps-"
+  tags = {
+    Name        = "cloudfront-logs-fps"
+  }
+}
+
+resource "aws_s3_bucket_acl" "cloudfront_logs_acl" {
+  bucket = aws_s3_bucket.cloudfront_logs.id
+  acl    = "private"
+}
+
+resource "aws_cloudfront_distribution" "custom_domain_distribution" {
   enabled     = true
   price_class = "PriceClass_100"
+
+  logging_config {
+    include_cookies = true
+    bucket          = aws_s3_bucket.cloudfront_logs.bucket_regional_domain_name
+    prefix          = "fps"
+  }
 
   default_cache_behavior {
     viewer_protocol_policy = "redirect-to-https"
@@ -56,6 +78,12 @@ resource "aws_cloudfront_distribution" "auth0_custom_domain_name" {
         forward = "all"
       }
     }
+
+    lambda_function_association {
+      event_type = "origin-response"
+      lambda_arn = aws_lambda_function.fps.qualified_arn
+    }
+
   }
 
   origin {
@@ -90,7 +118,4 @@ resource "aws_cloudfront_distribution" "auth0_custom_domain_name" {
     ssl_support_method  = "sni-only"
   }
 
-  lifecycle {
-    ignore_changes = [viewer_certificate]
-  }
 }

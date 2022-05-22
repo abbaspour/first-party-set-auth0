@@ -1,6 +1,6 @@
 resource "auth0_tenant" "tenant_config" {
   friendly_name = "First Party Set Demo"
-  support_email = "amin.abbaspour@auth0.com"
+  support_email = "amin.abbaspour@okta.com"
   allowed_logout_urls = []
   flags {
     enable_client_connections = false
@@ -15,7 +15,7 @@ resource "auth0_custom_domain" "custom_domain" {
 
 resource "auth0_custom_domain_verification" "custom_domain_verification" {
   custom_domain_id = auth0_custom_domain.custom_domain.id
-  timeouts { create = "15m" }
+  timeouts { create = "5m" }
   depends_on = [ aws_route53_record.custom_domain_verification_record ]
 }
 
@@ -40,7 +40,7 @@ data "auth0_global_client" "global" {
 }
 
 resource "auth0_connection" "users" {
-  name = "Users"
+  name = "users"
   display_name = "Demo users"
   strategy = "auth0"
   is_domain_connection = true
@@ -64,4 +64,12 @@ resource "auth0_user" "user_amin" {
   lifecycle {
     ignore_changes = [email_verified]
   }
+}
+
+output "client_id" {
+  value = auth0_client.client_jwt.client_id
+}
+
+output "authorize_request" {
+  value = "https://${local.auth0_custom_domain}/authorize?client_id=${auth0_client.client_jwt.client_id}&connection=${auth0_connection.users.name}&scope=openid%20profile&nonce=mynonce&response_type=id_token%20token&login_hint=${auth0_user.user_amin.email}"
 }

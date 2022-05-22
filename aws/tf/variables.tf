@@ -8,6 +8,11 @@ variable "owner_domain" {
   description = "owner domain of fist-party-set"
 }
 
+variable "auth0_subdomain" {
+  type = string
+  description = "subdomain for auth0"
+}
+
 variable "member_domains" {
   type = set(string)
   description = "members domains of fist-party-set"

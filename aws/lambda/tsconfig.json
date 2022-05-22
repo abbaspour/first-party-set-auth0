@@ -7,7 +7,9 @@
     "noImplicitAny": true,
     "preserveConstEnums": true,
     "outDir": "./js",
-    "sourceMap": true
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true
   },
   "include": [
     "src"

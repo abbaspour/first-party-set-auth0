@@ -11,6 +11,7 @@ endif
 function_name=first-party-set
 bundle=lambda-$(function_name)-$(version).zip
 region=us-east-1
+edge_region := $(shell curl -s -i https://id.abbaspour.live/testall  | awk '/^x-lambda-region:/{print $$2}')
 
 lambda: $(bundle)
 
@@ -48,7 +49,8 @@ upload: .$(bundle)-uploaded
 release: .$(bundle)-released
 
 logs:
-	$(PREFIX) aws --region $(region) logs tail --follow /aws/lambda/$(function_name)
+	@echo "From edge region: $(edge_region)"
+	$(PREFIX) aws --region $(edge_region) logs tail --follow /aws/lambda/$(region).$(function_name)
 
 
 clean:

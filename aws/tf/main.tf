@@ -3,7 +3,11 @@ resource "aws_route53_zone" "owner_zone" {
 }
 
 locals {
-  auth0_custom_domain = "id.${var.owner_domain}"
+  auth0_custom_domain = "${var.auth0_subdomain}.${var.owner_domain}"
+}
+
+output "custom_domain" {
+  value = local.auth0_custom_domain
 }
 
 resource "aws_acm_certificate" "certificate" {

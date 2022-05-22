@@ -1,30 +1,29 @@
-import {CloudFrontResponseEvent, CloudFrontResponseHandler, Context, CloudFrontResponse/*CloudFrontResponseCallback, CloudFrontResponseResult,*/} from 'aws-lambda';
+import {CloudFrontResponseEvent, CloudFrontResponseHandler, Context, CloudFrontResponse} from 'aws-lambda';
+
+// https://auth0.com/docs/manage-users/cookies/authentication-api-cookies
+const auth0CookiesRegEx = /^(auth0|auth0_compat|auth0-mf|auth0-mf_compat|did|did_compat)=/;
 
 /**
  * Adds security headers to a response.
  */
 export const handler: CloudFrontResponseHandler = async (event: CloudFrontResponseEvent, _: Context): Promise<CloudFrontResponse> => {
 
-    console.log('inside edge function');
-
     // Get contents of response
     const response = event.Records[0].cf.response;
     const headers = response.headers;
 
-    // Set new headers
-    headers['strict-transport-security'] = [{
-        key: 'Strict-Transport-Security',
-        value: 'max-age= 63072000; includeSubdomains; preload'
-    }];
-    headers['content-security-policy'] = [{
-        key: 'Content-Security-Policy',
-        value: "default-src 'self' cdnjs.cloudflare.com style-src 'self' 'unsafe-inline';"
-    }];
-    headers['x-frame-options'] = [{key: 'X-Frame-Options', value: 'DENY'}];
-    headers['x-xss-protection'] = [{key: 'X-XSS-Protection', value: '1; mode=block'}];
-    headers['referrer-policy'] = [{key: 'Referrer-Policy', value: 'same-origin'}];
+    //console.log('inside edge function. headers: ', headers);
+    const setCookies = headers["set-cookie"] || [];
 
+    for (const sc of setCookies) {
+        if(sc.key === 'Set-Cookie' && sc.value.match(auth0CookiesRegEx)) sc.value += '; SameParty';
+    }
+
+    console.log(setCookies);
+
+    // Set new headers
     headers['x-from-edge'] = [{key: 'X-From-Edge', value: 'Amin Typescript async'}];
+    headers['x-lambda-region'] = [ { key: 'X-Lambda-Region', value: process.env.AWS_REGION || 'unknown' } ];
 
     return response;
 };

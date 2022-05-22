@@ -6,10 +6,6 @@ terraform {
       source = "hashicorp/aws"
       version = "~> 4.15"
     }
-    virginia = {
-      source = "hashicorp/aws"
-      version = "~> 4.15"
-    }
     auth0 = {
       source = "auth0/auth0"
       version = "~> 0.30"
@@ -18,11 +14,8 @@ terraform {
 }
 
 provider "aws" {
+  //alias = "virginia"
   region = var.region
-}
-
-provider "virginia" {
-  region = "us-east-1"
 }
 
 provider "auth0" {

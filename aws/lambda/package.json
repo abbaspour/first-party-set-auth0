@@ -1,0 +1,13 @@
+{
+  "name": "first-party-set-lambda",
+  "version": "0.1.0",
+  "description": "edge lambda for first-party-set cookies",
+  "main": "src/lambda.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Amin Abbaspour <amin@okta.com>",
+  "license": "ISC",
+  "dependencies": {
+  }
+}

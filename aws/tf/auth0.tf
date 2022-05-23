@@ -46,12 +46,14 @@ resource "auth0_client" "client_member_spa" {
   token_endpoint_auth_method = "none"
 
   callbacks = [
-    "https://app.abbaspour.life",
+    "https://www.abbaspour.life",
+    "https://abbaspour-life.netlify.app",
     "http://localhost:3000"
   ]
 
   allowed_logout_urls = [
-    "https://app.abbaspour.life",
+    "https://www.abbaspour.life",
+    "https://abbaspour-life.netlify.app",
     "http://localhost:3000"
   ]
 

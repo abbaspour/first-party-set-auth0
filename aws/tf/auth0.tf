@@ -58,6 +58,7 @@ resource "auth0_client" "client_member_spa" {
   ]
 
   allowed_origins = [
+    "https://www.abbaspour.life"
   ]
 
   jwt_configuration {
@@ -121,6 +122,7 @@ resource "auth0_connection" "users" {
   enabled_clients = [
     var.auth0_tf_client_id,
     auth0_client.client_jwt.client_id,
+    auth0_client.client_owner_spa.client_id,
     auth0_client.client_member_spa.client_id
   ]
 }

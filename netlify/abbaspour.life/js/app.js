@@ -60,7 +60,9 @@ const configureClient = async () => {
  * @param {*} fn The function to execute if the user is logged in
  */
 const requireAuth = async (fn, targetUrl) => {
-  const isAuthenticated = await auth0.isAuthenticated();
+  //const isAuthenticated = await auth0.isAuthenticated();
+  const token = await auth0.getTokenSilently({ignoreCache: true})
+  const isAuthenticated = token != null;
 
   if (isAuthenticated) {
     return fn();

@@ -69,6 +69,39 @@ resource "auth0_client" "client_member_spa" {
   ]
 }
 
+resource "auth0_client" "client_owner_spa" {
+  name = "live-app"
+  description = "SPA for owner website"
+  app_type = "spa"
+  oidc_conformant = true
+  is_first_party = true
+
+  token_endpoint_auth_method = "none"
+
+  callbacks = [
+    "https://www.abbaspour.live",
+    "https://abbaspour-live.netlify.app",
+    "http://localhost:3001"
+  ]
+
+  allowed_logout_urls = [
+    "https://www.abbaspour.live",
+    "https://abbaspour-live.netlify.app",
+    "http://localhost:3001"
+  ]
+
+  allowed_origins = [
+  ]
+
+  jwt_configuration {
+    alg = "RS256"
+  }
+
+  grant_types = [
+    "implicit", "authorization_code", "refresh_token"
+  ]
+}
+
 data "auth0_global_client" "global" {
 }
 

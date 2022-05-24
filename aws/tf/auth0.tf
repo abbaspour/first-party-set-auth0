@@ -36,6 +36,73 @@ resource "auth0_client" "client_jwt" {
   }
 }
 
+resource "auth0_client" "client_member_spa" {
+  name = "life-app"
+  description = "SPA for member website"
+  app_type = "spa"
+  oidc_conformant = true
+  is_first_party = true
+
+  token_endpoint_auth_method = "none"
+
+  callbacks = [
+    "https://www.abbaspour.life",
+    "https://abbaspour-life.netlify.app",
+    "http://localhost:3000"
+  ]
+
+  allowed_logout_urls = [
+    "https://www.abbaspour.life",
+    "https://abbaspour-life.netlify.app",
+    "http://localhost:3000"
+  ]
+
+  allowed_origins = [
+    "https://www.abbaspour.life"
+  ]
+
+  jwt_configuration {
+    alg = "RS256"
+  }
+
+  grant_types = [
+    "implicit", "authorization_code", "refresh_token"
+  ]
+}
+
+resource "auth0_client" "client_owner_spa" {
+  name = "live-app"
+  description = "SPA for owner website"
+  app_type = "spa"
+  oidc_conformant = true
+  is_first_party = true
+
+  token_endpoint_auth_method = "none"
+
+  callbacks = [
+    "https://www.abbaspour.live",
+    "https://abbaspour-live.netlify.app",
+    "http://localhost:3001"
+  ]
+
+  allowed_logout_urls = [
+    "https://www.abbaspour.live",
+    "https://abbaspour-live.netlify.app",
+    "http://localhost:3001"
+  ]
+
+  allowed_origins = [
+  ]
+
+  jwt_configuration {
+    alg = "RS256"
+  }
+
+  grant_types = [
+    "implicit", "authorization_code", "refresh_token"
+  ]
+}
+
 data "auth0_global_client" "global" {
 }
 
@@ -52,7 +119,12 @@ resource "auth0_connection" "users" {
   }
 
 
-  enabled_clients = [ auth0_client.client_jwt.client_id, var.auth0_tf_client_id ]
+  enabled_clients = [
+    var.auth0_tf_client_id,
+    auth0_client.client_jwt.client_id,
+    auth0_client.client_owner_spa.client_id,
+    auth0_client.client_member_spa.client_id
+  ]
 }
 
 resource "auth0_user" "user_amin" {
@@ -66,8 +138,8 @@ resource "auth0_user" "user_amin" {
   }
 }
 
-output "client_id" {
-  value = auth0_client.client_jwt.client_id
+output "member_client_id" {
+  value = auth0_client.client_member_spa.client_id
 }
 
 output "authorize_request" {

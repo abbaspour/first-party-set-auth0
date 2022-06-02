@@ -1,43 +1,53 @@
-variable "cf_email" {
-  type = string
-  description = "Cloudflare account email"
+# cloudflare config
+variable "cloudflare_email" {
+  type        = string
+  description = "cloudflare email"
 }
 
-variable "cf_api_key" {
-  type = string
-  description = "Cloudflare API key"
-  sensitive = true
+variable "cloudflare_account_id" {
+  type        = string
+  description = "cloudflare account_id"
 }
 
-variable "cf_account_id" {
-  type = string
-  description = "Cloudflare account ID"
+variable "cloudflare_api_key" {
+  type        = string
+  description = "cloudflare api key"
+  sensitive   = true
 }
 
-variable "owner_domain" {
-  type = string
-  description = "owner domain of fist-party-set"
+# domains config
+variable "fpset_owner_domain" {
+  description = "First Party Set Owner Domain"
 }
 
-variable "member_domains" {
-  type = set(string)
-  description = "members domains of fist-party-set"
+variable "fpset_member_domains_list" {
+  description = "First Party Set Members Domains List"
+  type        = list(string)
 }
 
+variable "fpset_owner_app_origin" {
+  description = "App hosting URL (Netlify, Vercel etc.)"
+}
+
+variable "fpset_member_app_origins_list" {
+  type        = list(string)
+  description = "App hosting URLs (Netlify, Vercel etc.)"
+}
+
+# auth0 config
 variable "auth0_domain" {
-  type = string
-  description = "auth0 domain"
+  description = "Auth0 Domain"
 }
 
-variable "auth0_tf_client_id" {
-  type = string
-  description = "Auth0 TF provider client_id"
+variable "auth0_client_id" {
+  description = "Auth0 Client ID"
 }
 
-variable "auth0_tf_client_secret" {
-  type = string
-  description = "Auth0 TF provider client_secret"
-  sensitive = true
+variable "auth0_client_secret" {
+  description = "Auth0 Client Secret"
 }
 
-
+variable "auth0_smcd_prefix" {
+  description = "Subdomain (prefix only, not FQDN) for Auth0 Custom Domain"
+  default     = "auth"
+}
